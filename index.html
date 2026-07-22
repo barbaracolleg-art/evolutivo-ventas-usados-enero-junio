@@ -209,7 +209,10 @@
   </div>
 
   <div class="tab-panel" id="tab-tendencia">
-    <h2 style="margin-top:0">Tendencia por sucursal (Enero a Junio)</h2>
+    <h2 style="margin-top:0">Red completa: sucursales activas y vendedores disponibles</h2>
+    <div class="charts-grid" id="networkChart" style="grid-template-columns: 1fr; margin-bottom: 22px;"></div>
+
+    <h2>Tendencia por sucursal (Enero a Junio)</h2>
     <div class="trend-toolbar">
       <label>Sucursal:
         <select id="sucFilter"></select>
@@ -501,6 +504,19 @@
   }
   sucSel.addEventListener('change', renderCharts);
   renderCharts();
+
+  // ---- Red completa: sucursales activas + vendedores disponibles por mes ----
+  (function () {
+    var sucursalesActivas = [0,0,0,0,0,0];
+    branches.forEach(function (b) {
+      b.pres.forEach(function (p, i) { if (p === 1) sucursalesActivas[i]++; });
+    });
+    var vendedoresRed = totalChile.m.vend_disp;
+    document.getElementById('networkChart').innerHTML = svgLineChart('Sucursales activas vs Vendedores Disponibles (red completa)', [
+      { name: 'Sucursales activas', color: 'var(--series-2)', values: sucursalesActivas },
+      { name: 'Vendedores Disponibles', color: 'var(--series-1)', values: vendedoresRed }
+    ], {});
+  })();
 
   // ---- Tab 2: "Evolución por sucursal" — indicators as rows, all 6 months as columns ----
   var METRICS_ORDER = [
